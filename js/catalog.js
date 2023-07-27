@@ -1,92 +1,86 @@
+import { createNavbar, createPetCatalogCard } from "./modules/dom.js";
+import { getPets } from "./modules/petsApi.js";
+
 let token = localStorage.getItem("token");
-console.log(token);
 
 !token && window.open("../views/login.html", "_self");
 
-const getPets = async () => {
-  let response = await fetch(
-    "https://javascript27g-default-rtdb.firebaseio.com/mascotadopta/pets/.json"
-  );
-  let data = await response.json();
-  return data;
+document.getElementById("nav-wrapper").innerHTML = createNavbar(token);
+document.getElementById("log-out").addEventListener("click", () => {
+  localStorage.removeItem("token");
+  window.open("../views/login.html", "_self");
+});
+
+let allPets = []; /*aquí esta la información de todas las mascotas*/
+
+const getAllPets = async () => {
+  let data = await getPets();
+  console.log(data);
+  let keys = Object.keys(data);
+
+  let petsArray = keys.reduce((accum, current) => {
+    console.log(accum);
+    console.log(current); /*esta es la llave*/
+    console.log(
+      data[current]
+    ); /*este es el objeto que representa a la mascota*/
+    let key = current;
+    let petObject = data[current];
+    let petFullObject = { key: key, ...petObject };
+    console.log(petFullObject);
+    return [...accum, petFullObject];
+  }, []);
+  console.log("petsArray");
+  console.log(petsArray);
+  allPets = petsArray;
+  printAllCards(allPets);
 };
 
-const createPetCatalogCard = (petObject) => {
-  let { picture, name, description } = petObject;
-  let cardCol = document.createElement("div");
-  cardCol.classList.add("col");
-
-  let cardWrapper = document.createElement("div");
-  cardWrapper.classList.add("card", "mb-3");
-
-  let cardRow = document.createElement("div");
-  cardRow.classList.add("row", "g-0");
-
-  let imageWrapper = document.createElement("div");
-  imageWrapper.classList.add("col-md-4");
-
-  let cardImage = document.createElement("img");
-  cardImage.classList.add("img-fluid", "rounded-start");
-  cardImage.setAttribute("src", picture);
-  cardImage.setAttribute("alt", "Imagen de un perro");
-
-  let contentWrapper = document.createElement("div");
-  contentWrapper.classList.add("col-md-8");
-
-  let cardBody = document.createElement("div");
-  cardBody.classList.add("card-body");
-
-  let cardTitle = document.createElement("h5");
-  cardTitle.classList.add("card-title");
-  cardTitle.innerText = name;
-
-  let cardText = document.createElement("p");
-  cardText.classList.add("card-text");
-  cardText.innerText = description;
-
-  let buttonWrapper = document.createElement("div");
-  buttonWrapper.classList.add("d-flex", "gap-3", "justify-content-between");
-
-  let detailButton = document.createElement("button");
-  detailButton.classList.add("btn", "btn-primary");
-  detailButton.innerText = "Ver detalle";
-
-  let adoptButton = document.createElement("button");
-  adoptButton.classList.add("btn", "btn-primary");
-  adoptButton.innerText = "Adóptame";
-
-  buttonWrapper.append(detailButton, adoptButton);
-  cardBody.append(cardTitle, cardText, buttonWrapper);
-
-  contentWrapper.append(cardBody);
-
-  imageWrapper.append(cardImage);
-
-  cardRow.append(imageWrapper, contentWrapper);
-
-  cardWrapper.append(cardRow);
-
-  cardCol.append(cardWrapper);
-
-  return cardCol;
-};
-
-const printAllCards = async () => {
-  let pets = await getPets();
-  console.log(pets);
-
+const printAllCards = (petsList) => {
   let cardWrapper = document.getElementById("card-wrapper");
 
-  let keys = Object.keys(pets);
-  console.log(keys);
-
-  keys.forEach((key) => {
-    console.log("key: ", key);
-    console.log("value: ", pets[key]);
-    let petCard = createPetCatalogCard(pets[key]);
+  petsList.forEach((pet) => {
+    let petCard = createPetCatalogCard(pet);
     console.log(petCard);
     cardWrapper.append(petCard);
   });
 };
 
-printAllCards();
+getAllPets();
+
+/*
+let filterType = "";
+
+let radios = document.querySelectorAll("input[name='filter-type']");
+
+radios.forEach((input) => {
+  input.addEventListener("click", (event) => {
+    filterType = event.target.value;
+    console.log(filterType);
+  });
+});
+*/
+
+/*const filterPets = async (filterType, value) => {
+  let pets = await getPets();
+  console.log(pets);
+};*/
+
+/*
+document.getElementById("search-input").addEventListener("keyup", (event) => {
+  let value = event.target.value;
+  console.log(value);
+  console.log(allPets);
+  let values = Object.values(allPets);
+  console.log(values);
+  switch (filterType) {
+    case "breed":
+      break;
+    case "size":
+      break;
+    case "specie":
+      break;
+  }
+});
+
+*/

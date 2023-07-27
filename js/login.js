@@ -1,3 +1,10 @@
+import { createNavbar } from "./modules/dom.js";
+
+let token = localStorage.getItem("token");
+console.log(token);
+
+//!token && window.open("../views/login.html", "_self");
+
 let user = {};
 
 /*
@@ -48,7 +55,4 @@ document.getElementById("login-button").addEventListener("click", async () => {
   }
 });
 
-/*document.getElementById("login-form").addEventListener("keyup", (event) => {
-  console.log(event.target.name);
-  console.log(event.target.value);
-});*/
+document.getElementById("nav-wrapper").innerHTML = createNavbar(token);
