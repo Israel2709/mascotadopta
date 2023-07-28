@@ -51,7 +51,7 @@ const createNavbar = (isLogged) => {
 };
 
 const createPetCatalogCard = (petObject) => {
-  let { picture, name, description } = petObject;
+  let { picture, name, description, key } = petObject;
   let cardCol = document.createElement("div");
   cardCol.classList.add("col");
 
@@ -89,6 +89,11 @@ const createPetCatalogCard = (petObject) => {
   let detailButton = document.createElement("button");
   detailButton.classList.add("btn", "btn-primary");
   detailButton.innerText = "Ver detalle";
+
+  detailButton.addEventListener("click", () => {
+    console.log(key);
+    window.open(`../../views/detail.html?petId=${key}`, "_self");
+  });
 
   let adoptButton = document.createElement("button");
   adoptButton.classList.add("btn", "btn-primary");

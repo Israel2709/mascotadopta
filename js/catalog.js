@@ -38,7 +38,7 @@ const getAllPets = async () => {
 
 const printAllCards = (petsList) => {
   let cardWrapper = document.getElementById("card-wrapper");
-
+  cardWrapper.innerHTML = "";
   petsList.forEach((pet) => {
     let petCard = createPetCatalogCard(pet);
     console.log(petCard);
@@ -48,8 +48,7 @@ const printAllCards = (petsList) => {
 
 getAllPets();
 
-/*
-let filterType = "";
+let filterType = "breed";
 
 let radios = document.querySelectorAll("input[name='filter-type']");
 
@@ -59,28 +58,24 @@ radios.forEach((input) => {
     console.log(filterType);
   });
 });
-*/
 
-/*const filterPets = async (filterType, value) => {
-  let pets = await getPets();
-  console.log(pets);
-};*/
+const showNoResults = () => {
+  let cardWrapper = document.getElementById("card-wrapper");
+  cardWrapper.innerHTML = `
+  <div class="alert alert-info" role="alert">
+    Búsqueda sin resultados
+</div>
+  `;
+};
 
-/*
 document.getElementById("search-input").addEventListener("keyup", (event) => {
   let value = event.target.value;
+  console.log(filterType);
   console.log(value);
-  console.log(allPets);
-  let values = Object.values(allPets);
-  console.log(values);
-  switch (filterType) {
-    case "breed":
-      break;
-    case "size":
-      break;
-    case "specie":
-      break;
-  }
-});
 
-*/
+  let result = allPets.filter((pet) => {
+    return pet[filterType].toLowerCase().includes(value.toLowerCase());
+  });
+
+  !result.length ? showNoResults() : printAllCards(result);
+});
